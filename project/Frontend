@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register | ApplianceCompare</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f5f7fb;
+      color: #172033;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      height: 72px;
+      background: #ffffff;
+      border-bottom: 1px solid #e7eaf0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 7%;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 800;
+      color: #1769e0;
+    }
+
+    .logo span {
+      color: #172033;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #505a6d;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: #1769e0;
+    }
+
+    .login-btn {
+      padding: 10px 19px;
+      border: 1px solid #1769e0;
+      border-radius: 7px;
+      color: #1769e0 !important;
+      font-weight: 600;
+    }
+
+    /* MAIN */
+    .page {
+      min-height: calc(100vh - 72px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* LEFT SECTION */
+    .intro {
+      background: linear-gradient(145deg, #0c4da2, #1769e0);
+      color: white;
+      padding: 80px 10%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .intro h1 {
+      font-size: 44px;
+      line-height: 1.12;
+      margin-bottom: 20px;
+    }
+
+    .intro h1 span {
+      color: #8fc5ff;
+    }
+
+    .intro p {
+      color: #dcecff;
+      line-height: 1.7;
+      max-width: 510px;
+      margin-bottom: 35px;
+    }
+
+    .benefits {
+      list-style: none;
+    }
+
+    .benefits li {
+      margin: 17px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+    }
+
+    .check {
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* REGISTER */
+    .register-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 50px 8%;
+    }
+
+    .register-card {
+      width: 100%;
+      max-width: 470px;
+      background: #ffffff;
+      padding: 38px;
+      border-radius: 15px;
+      box-shadow: 0 12px 40px rgba(20, 38, 70, 0.09);
+    }
+
+    .register-card h2 {
+      font-size: 29px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #737d90;
+      font-size: 14px;
+      margin-bottom: 27px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 7px;
+      color: #394356;
+    }
+
+    input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid #d8dde7;
+      border-radius: 7px;
+      padding: 0 13px;
+      outline: none;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #1769e0;
+      box-shadow: 0 0 0 3px rgba(23,105,224,0.1);
+    }
+
+    .password-box {
+      position: relative;
+    }
+
+    .password-box input {
+      padding-right: 55px;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 13px;
+      top: 14px;
+      border: 0;
+      background: transparent;
+      color: #1769e0;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 4px 0 20px;
+      color: #6c7483;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .terms input {
+      width: 15px;
+      height: 15px;
+      margin-top: 2px;
+    }
+
+    .terms a {
+      color: #1769e0;
+      text-decoration: none;
+    }
+
+    .register-btn {
+      width: 100%;
+      height: 48px;
+      border: 0;
+      border-radius: 7px;
+      background: #1769e0;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .register-btn:hover {
+      background: #0d55bd;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 23px 0;
+      color: #9aa2b1;
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      background: #e4e7ed;
+      flex: 1;
+    }
+
+    .social-login {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .social-btn {
+      height: 43px;
+      border: 1px solid #d9dee8;
+      background: #fff;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #454e5f;
+    }
+
+    .social-btn:hover {
+      background: #f7f9fc;
+    }
+
+    .bottom-text {
+      text-align: center;
+      font-size: 13px;
+      color: #747d8d;
+      margin-top: 24px;
+    }
+
+    .bottom-text a {
+      color: #1769e0;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .error {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .success {
+      display: none;
+      padding: 12px;
+      margin-bottom: 18px;
+      background: #e9f8ef;
+      border: 1px solid #b9e6c9;
+      color: #18743b;
+      border-radius: 7px;
+      font-size: 13px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 850px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .intro {
+        padding: 50px 8%;
+      }
+
+      .intro h1 {
+        font-size: 36px;
+      }
+
+      .register-area {
+        padding: 40px 6%;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .navbar {
+        padding: 0 5%;
+      }
+
+      .nav-links a:not(.login-btn) {
+        display: none;
+      }
+
+      .register-card {
+        padding: 25px 20px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .social-login {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">
+      Appliance<span>Compare</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="#">Compare Appliances</a>
+      <a href="#">Buying Guides</a>
+      <a href="#">Reviews</a>
+      <a href="#" class="login-btn">Login</a>
+    </div>
+  </nav>
+
+
+  <main class="page">
+
+    <!-- LEFT INFORMATION -->
+    <section class="intro">
+
+      <h1>
+        Make smarter<br>
+        <span>appliance decisions.</span>
+      </h1>
+
+      <p>
+        Create your free account and compare refrigerators,
+        washing machines, air conditioners, televisions and
+        other home appliances before you buy.
+      </p>
+
+      <ul class="benefits">
+
+        <li>
+          <span class="check">✓</span>
+          Compare prices and specifications
+        </li>
+
+        <li>
+          <span class="check">✓</span>
+          Save your favorite appliances
+        </li>
+
+        <li>
+          <span class="check">✓</span>
+          Get personalized buying guides
+        </li>
+
+        <li>
+          <span class="check">✓</span>
+          Track products and price changes
+        </li>
+
+      </ul>
+
+    </section>
+
+
+    <!-- REGISTER SECTION -->
+    <section class="register-area">
+
+      <div class="register-card">
+
+        <h2>Create your account</h2>
+
+        <p class="subtitle">
+          Join thousands of smart shoppers.
+        </p>
+
+        <div class="success" id="successMessage">
+          Account created successfully!
+        </div>
+
+        <form id="registerForm">
+
+          <div class="form-row">
+
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input
+                type="text"
+                id="firstName"
+                placeholder="John"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                placeholder="Doe"
+                required
+              />
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+
+            <input
+              type="email"
+              id="email"
+              placeholder="you@example.com"
+              required
+            />
+
+            <div class="error" id="emailError">
+              Please enter a valid email address.
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="password">Password</label>
+
+            <div class="password-box">
+
+              <input
+                type="password"
+                id="password"
+                placeholder="Create a password"
+                minlength="8"
+                required
+              />
+
+              <button
+                type="button"
+                class="show-password"
+                onclick="togglePassword()"
+              >
+                Show
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+            <label for="confirmPassword">
+              Confirm Password
+            </label>
+
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm your password"
+              required
+            />
+
+            <div class="error" id="passwordError">
+              Passwords do not match.
+            </div>
+          </div>
+
+
+          <label class="terms">
+
+            <input type="checkbox" id="terms" required />
+
+            <span>
+              I agree to the
+              <a href="#">Terms of Service</a>
+              and
+              <a href="#">Privacy Policy</a>.
+            </span>
+
+          </label>
+
+
+          <button type="submit" class="register-btn">
+            Create Free Account
+          </button>
+
+        </form>
+
+
+        <div class="divider">
+          OR CONTINUE WITH
+        </div>
+
+
+        <div class="social-login">
+
+          <button class="social-btn">
+            Google
+          </button>
+
+          <button class="social-btn">
+            Facebook
+          </button>
+
+        </div>
+
+
+        <p class="bottom-text">
+          Already have an account?
+          <a href="#">Log in</a>
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    // SHOW / HIDE PASSWORD
+    function togglePassword() {
+
+      const password = document.getElementById("password");
+      const button = document.querySelector(".show-password");
+
+      if (password.type === "password") {
+        password.type = "text";
+        button.textContent = "Hide";
+      } else {
+        password.type = "password";
+        button.textContent = "Show";
+      }
+
+    }
+
+
+    // FORM VALIDATION
+    document
+      .getElementById("registerForm")
+      .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const email =
+          document.getElementById("email");
+
+        const password =
+          document.getElementById("password");
+
+        const confirmPassword =
+          document.getElementById("confirmPassword");
+
+        const emailError =
+          document.getElementById("emailError");
+
+        const passwordError =
+          document.getElementById("passwordError");
+
+        const successMessage =
+          document.getElementById("successMessage");
+
+        let valid = true;
+
+
+        // Email validation
+        const emailPattern =
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(email.value)) {
+
+          emailError.style.display = "block";
+          valid = false;
+
+        } else {
+
+          emailError.style.display = "none";
+
+        }
+
+
+        // Password validation
+        if (password.value !== confirmPassword.value) {
+
+          passwordError.style.display = "block";
+          valid = false;
+
+        } else {
+
+          passwordError.style.display = "none";
+
+        }
+
+
+        if (!valid) {
+          return;
+        }
+
+
+        // Demo success
+        successMessage.style.display = "block";
+
+        document
+          .getElementById("registerForm")
+          .reset();
+
+      });
+
+  </script>
+
+</body>
+</html>
