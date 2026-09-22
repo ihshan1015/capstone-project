@@ -1,7 +1,5 @@
 import axios from 'axios';
-
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
-
+const API = axios.create({ baseURL: 'https://capstone-project-q1xl.onrender.com/api' });
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
