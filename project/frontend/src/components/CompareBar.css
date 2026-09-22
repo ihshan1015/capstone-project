@@ -1,0 +1,51 @@
+.compare-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.compare-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.compare-text {
+  font-weight: bold;
+}
+
+.compare-items {
+  display: flex;
+  gap: 1rem;
+}
+
+.compare-item {
+  background: #f5f5f5;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.remove-btn {
+  color: red;
+  font-weight: bold;
+}
+
+.compare-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-clear {
+  color: #666;
+  text-decoration: underline;
+}
