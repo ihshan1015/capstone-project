@@ -28,10 +28,16 @@ async function initSqlite() {
 
   const checkTableExists = () => {
     return new Promise((resolve) => {
-      sqliteDb.get("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='categories'", (err, row) => {
-        if (err || !row || row.cnt === 0) resolve(false);
-        else resolve(true);
-      });
+      sqliteDb.get(
+        "SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name='products'",
+        (err, row) => {
+          if (err || !row || row.cnt === 0) {
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        }
+      );
     });
   };
 
@@ -39,12 +45,12 @@ async function initSqlite() {
 
   if (!hasTables) {
     console.log('Initializing local SQLite database with schema and seed data...');
-    let schemaSql = fs.readFileSync(schemaPath, 'utf8');
-    let seedSql = fs.readFileSync(seedPath, 'utf8');
 
-    // Clean MySQL specific statements for SQLite
+    const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+    const seedSql = fs.readFileSync(seedPath, 'utf8');
+
     const prepareSqliteSql = (sqlStr) => {
-      let sql = sqlStr
+      return sqlStr
         .replace(/^--.*$/gm, '')
         .replace(/CREATE DATABASE IF NOT EXISTS[^;]+;/gi, '')
         .replace(/USE [^;]+;/gi, '')
@@ -55,16 +61,15 @@ async function initSqlite() {
         .replace(/LONGTEXT/gi, 'TEXT')
         .replace(/DECIMAL\([^)]+\)/gi, 'NUMERIC')
         .replace(/ON UPDATE CURRENT_TIMESTAMP/gi, '')
-        .replace(/UNIQUE KEY [^\s(]+ \(([^)]+)\)/gi, 'UNIQUE($1)')
+        .replace(/UNIQUE KEY [^\s(]+\s*\(([^)]+)\)/gi, 'UNIQUE($1)')
         .replace(/,\s*FOREIGN KEY \([^)]+\) REFERENCES [^\n,);]+/gi, '')
         .replace(/FOREIGN KEY \([^)]+\) REFERENCES [^\n,);]+/gi, '')
         .replace(/,\s*\)/g, '\n)');
-
-      return sql;
     };
 
     const runStatements = (rawSql) => {
       const sqlText = prepareSqliteSql(rawSql);
+
       const statements = sqlText
         .split(';')
         .map(s => s.trim())
@@ -75,12 +80,22 @@ async function initSqlite() {
           for (const stmt of statements) {
             sqliteDb.run(stmt, (err) => {
               if (err && !err.message.includes('already exists')) {
-                console.log('SQLite init stmt error:', err.message, '| Statement:', stmt.substring(0, 100));
+                console.log(
+                  'SQLite init stmt error:',
+                  err.message,
+                  '| Statement:',
+                  stmt.substring(0, 100)
+                );
               }
             });
           }
+
           sqliteDb.run('SELECT 1', (err) => {
-            if (err) return reject(err);
+            if (err) {
+              reject(err);
+              return;
+            }
+
             resolve();
           });
         });
@@ -89,6 +104,7 @@ async function initSqlite() {
 
     await runStatements(schemaSql);
     await runStatements(seedSql);
+
     console.log('SQLite database initialized successfully.');
   }
 }
@@ -97,18 +113,21 @@ function ensureSqliteInit() {
   if (!sqliteReadyPromise) {
     sqliteReadyPromise = initSqlite();
   }
+
   return sqliteReadyPromise;
 }
 
-// Perform initial connection test to MySQL
 (async () => {
   try {
     const connection = await mysqlPool.getConnection();
     connection.release();
+
     console.log('Database connected: MySQL');
   } catch (err) {
     console.log('MySQL connection failed. Falling back to local SQLite database.');
+
     useSqlite = true;
+
     await ensureSqliteInit();
   }
 })();
@@ -121,14 +140,19 @@ const poolWrapper = {
       } catch (err) {
         if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
           console.log('Switching to local SQLite due to MySQL connection error.');
+
           useSqlite = true;
+
           await ensureSqliteInit();
+
           return this.querySqlite(sql, params);
         }
+
         throw err;
       }
     } else {
       await ensureSqliteInit();
+
       return this.querySqlite(sql, params);
     }
   },
@@ -138,15 +162,31 @@ const poolWrapper = {
       let formattedSql = sql;
       let formattedParams = [...params];
 
-      // Handle MySQL `INSERT IGNORE`
-      formattedSql = formattedSql.replace(/INSERT IGNORE INTO/gi, 'INSERT OR IGNORE INTO');
+      formattedSql = formattedSql.replace(
+        /INSERT IGNORE INTO/gi,
+        'INSERT OR IGNORE INTO'
+      );
 
-      // Handle bulk insert with array of arrays `VALUES ?`
-      if (formattedParams.length === 1 && Array.isArray(formattedParams[0])) {
+      if (
+        formattedParams.length === 1 &&
+        Array.isArray(formattedParams[0])
+      ) {
         const rows = formattedParams[0];
-        if (Array.isArray(rows) && rows.length > 0 && Array.isArray(rows[0])) {
-          const rowPlaceholders = rows.map(r => '(' + r.map(() => '?').join(', ') + ')').join(', ');
-          formattedSql = formattedSql.replace('VALUES ?', 'VALUES ' + rowPlaceholders);
+
+        if (
+          Array.isArray(rows) &&
+          rows.length > 0 &&
+          Array.isArray(rows[0])
+        ) {
+          const rowPlaceholders = rows
+            .map(row => '(' + row.map(() => '?').join(', ') + ')')
+            .join(', ');
+
+          formattedSql = formattedSql.replace(
+            'VALUES ?',
+            'VALUES ' + rowPlaceholders
+          );
+
           formattedParams = rows.flat();
         }
       }
@@ -154,20 +194,40 @@ const poolWrapper = {
       const isSelect = /^\s*(SELECT|PRAGMA|EXPLAIN)/i.test(formattedSql);
 
       if (isSelect) {
-        sqliteDb.all(formattedSql, formattedParams, (err, rows) => {
-          if (err) return reject(err);
-          // Convert row boolean/numeric values to match JS expectation
-          resolve([rows || [], []]);
-        });
+        sqliteDb.all(
+          formattedSql,
+          formattedParams,
+          (err, rows) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+
+            resolve([rows || [], []]);
+          }
+        );
       } else {
-        sqliteDb.run(formattedSql, formattedParams, function (err) {
-          if (err) return reject(err);
-          resolve([{ insertId: this.lastID, affectedRows: this.changes }, []]);
-        });
+        sqliteDb.run(
+          formattedSql,
+          formattedParams,
+          function (err) {
+            if (err) {
+              reject(err);
+              return;
+            }
+
+            resolve([
+              {
+                insertId: this.lastID,
+                affectedRows: this.changes
+              },
+              []
+            ]);
+          }
+        );
       }
     });
   }
 };
 
 module.exports = poolWrapper;
-
